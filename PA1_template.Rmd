@@ -10,21 +10,39 @@ output:
 data <- read.csv("activity.csv")
 getwd()
 data$date <- as.Date(data$date)
-str(data)
+head(data, n = 20)
 ```
 
 
 ## What is mean total number of steps taken per day?
 ```{r}
 library(dplyr)
-data %>% group_by(date) %>% summarize(total=sum(steps)) %>% summarize(average = mean(total, na.rm = TRUE))
+dailySteps <- data %>% group_by(date) %>% summarize(dailySteps=sum(steps))
+
+# mean daily steps
+meanDailySteps <- mean(dailySteps$dailySteps, na.rm = TRUE)
+meanDailySteps
+
+# mean daily steps
+medianDailySteps <- median(dailySteps$dailySteps, na.rm = TRUE)
+medianDailySteps
+summary(dailySteps$dailySteps)
+```
+
+* mean dailys speps `r meanDailySteps`
+* median daily steps `r medianDailySteps`
+
+```{r}
+hist(dailySteps$dailySteps, breaks = 10)
 ```
 ## What is the average daily activity pattern?
 ```{r}
+data %>% group_by(interval) %>% summarize(meanActivity = mean(steps, na.rm = TRUE)) %>% ggplot(aes(interval, meanActivity)) + geom_line()
+```
+
+## Imputing missing values
+```{r}
 
 ```
-## Imputing missing values
-
-
 
 ## Are there differences in activity patterns between weekdays and weekends?
