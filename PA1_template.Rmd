@@ -5,19 +5,24 @@ output:
     keep_md: true
 ---
 
-
 ## Loading and preprocessing the data
-
+```{r echo = TRUE}
+data <- read.csv("activity.csv")
+getwd()
+data$date <- as.Date(data$date)
+str(data)
+```
 
 
 ## What is mean total number of steps taken per day?
-
-
-
+```{r}
+library(dplyr)
+data %>% group_by(date) %>% summarize(total=sum(steps)) %>% summarize(average = mean(total, na.rm = TRUE))
+```
 ## What is the average daily activity pattern?
+```{r}
 
-
-
+```
 ## Imputing missing values
 
 
