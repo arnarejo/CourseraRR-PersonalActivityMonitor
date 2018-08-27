@@ -1,11 +1,20 @@
 ---
-title: "Reproducible Research: Peer Assessment 1"
-output: 
+title: 'Reproducible Research: Peer Assessment 1'
+author: "Abdul Rasheed Narejo"
+date: "August 27, 2018"
+output:
   html_document:
     keep_md: true
+    toc: true
+    number_sections: true
+    toc_depth: 2
+    toc_float: true
+    theme: flatly
+    fig_width: 8
+    fig_height: 6
 ---
 
-## Introduction
+## <a id="top">Introduction</a>
 It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, [Nike](http://www.fitbit.com/) [Fuelband](http://www.nike.com/us/en_us/c/nikeplus-fuelband), or [Jawbone Up](https://jawbone.com/up). These type of devices are part of the “quantified self” movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
 
 This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
@@ -21,18 +30,18 @@ The variables included in this dataset are:
 
 The dataset is stored in a comma-separated-value (CSV) file and there are a total of 17,568 observations in this dataset.
 
-## 0. Load required libraries
+## Load required libraries
 
 
 ```r
 library(dplyr) # load dplyr for data manipulation
-library(lattice) # lattice for data visualization
+library(ggthemes) # use themes to beautify graphs
 library(ggplot2) # ggplot for data visualization
 ```
 
-## 1. Loading and preprocessing the data
+## Loading and preprocessing the data
 
-### 1.1 Load the data (read.csv())
+### Load the data (read.csv())
 
 ```r
 data <- read.csv("activity.csv")
@@ -44,7 +53,7 @@ summary(data$steps)
 ##    0.00    0.00    0.00   37.38   12.00  806.00    2304
 ```
 
-### 1.2 Process/transform the data (if necessary) into a format suitable for your analysis,
+### Process/transform the data (if necessary) into a format suitable for your analysis,
 
 ```r
 # format date column as valid Date format
@@ -65,10 +74,15 @@ summary(data)
 ##  NA's   :2304
 ```
 
-## 2. What is mean total number of steps taken per day?
+ [back to top](#top)
+
+ 
+-----
+
+## What is mean total number of steps taken per day?
 For this part of the assignment, you can ignore the missing values in the dataset.
 
-### 2.1 Calculate the total number of steps taken per day
+### Calculate the total number of steps taken per day
 
 
 ```r
@@ -88,7 +102,7 @@ summary(dailySteps)
 ##                       NA's   :8
 ```
 
-### 2.2 Make a histogram of the total number of steps taken each day
+### Make a histogram of the total number of steps taken each day
 
 
 ```r
@@ -99,13 +113,14 @@ ggplot(na.omit(dailySteps), aes(dailySteps)) +
                     fill="lightblue", 
                     alpha = .2
                    ) + 
+    theme_economist() +
     labs(title="Histogram of Total Daily Steps") +
     labs(x="Steps", y="Count")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-5-1.png)<!-- -->
 
-### 2.3. Calculate and report the mean and median of the total number of steps taken per day
+### Calculate and report the mean and median of the total number of steps taken per day
 
 
 ```r
@@ -117,7 +132,7 @@ meanDailySteps
 ```
 ## [1] 10766
 ```
-**mean daily steps are 10,766**
+**NOTE:** Mean daily steps are 10,766
 
 
 ```r
@@ -129,10 +144,17 @@ medianDailySteps
 ```
 ## [1] 10765
 ```
-**mean daily steps are 10,765**
+**NOTE:** Meedian daily steps are 10,765
 
-## 3. What is the average daily activity pattern?
-### 3.1 Plot 5-minute interval and average number of steps taken
+
+ [back to top](#top)
+
+ 
+-----
+
+
+## What is the average daily activity pattern?
+### Plot 5-minute interval and average number of steps taken
 Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
 
 
@@ -141,12 +163,15 @@ Make a time series plot of the 5-minute interval (x-axis) and the average number
 dailyPattern <- data %>% group_by(interval) %>% summarize(meanActivity = mean(steps, na.rm = TRUE))
 
 # plot average 5-minute activity trend using ggplot
-ggplot(dailyPattern, aes(interval, meanActivity)) + geom_line()
+ggplot(dailyPattern, aes(interval, meanActivity)) + geom_line() + 
+        theme_economist() +
+        labs(title="5-minute activity pattern for average day") +
+    labs(x="5 minutes interval", y="Steps")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
 
-### 3.2 Which 5-minute interval had maximum steps?
+### Which 5-minute interval had maximum steps?
 Which 5-minute interval, on average across all the days in the dataset, contains the maximum number of steps?
 
 
@@ -163,8 +188,8 @@ maxStepsInterval
 ```
 Interval **835** had maximum average steps of **206**
 
-## 4. Imputing missing values
-### 4.1 Total Missing Values
+## Imputing missing values
+### Total Missing Values
 Calculate and report the total number of missing values in the dataset (i.e. the total number of rows with NAs)
 
 ```r
@@ -177,12 +202,12 @@ totalMissingValues
 ```
 There are total 2304 number of total missing values
 
-### 4.2 Stragety to fill missing values
+### Stragety to fill missing values
 Devise a strategy for filling in all of the missing values in the dataset. The strategy does not need to be sophisticated. For example, you could use the mean/median for that day, or the mean for that 5-minute interval, etc.
 
-**there is a fluctuation of activity based on the time of the day. Hence, for each missing value we can use average for same slot across all available values**
+**There is a fluctuation of activity based on the time of the day. Hence, for each missing value we can use average for same slot across all available values**
 
-### 4.3 Fill missing Values
+### Fill missing Values
 Create a new dataset that is equal to the original dataset but with the missing data filled in.
 
 
@@ -190,6 +215,8 @@ Create a new dataset that is equal to the original dataset but with the missing 
 newData <- data %>% 
              group_by(interval) %>% 
              mutate(steps= ifelse(is.na(steps), mean(steps, na.rm=TRUE), steps))
+
+# check for missing values in new DataFrame
 sum(is.na(newData$steps))
 ```
 
@@ -197,7 +224,7 @@ sum(is.na(newData$steps))
 ## [1] 0
 ```
 
-### 4.4 Histogram of total steps each day, calculate mean and median
+### Histogram of total steps each day, calculate mean and median
 Make a histogram of the total number of steps taken each day and Calculate and report the mean and median total number of steps taken per day. Do these values differ from the estimates from the first part of the assignment? What is the impact of imputing missing data on the estimates of the total daily number of steps?
 
 
@@ -215,6 +242,7 @@ ggplot(dailyStepsRevised, aes(dailySteps)) +
                     fill="lightblue", 
                     alpha = .2
                    ) + 
+    theme_economist() +
     labs(title="Histogram of Total Daily Steps") +
     labs(x="Steps", y="Count")
 ```
@@ -226,15 +254,23 @@ ggplot(dailyStepsRevised, aes(dailySteps)) +
 # calculate mean daily steps for all days
 meanDailyStepsRevised <- mean(dailyStepsRevised$dailySteps, na.rm = TRUE)
 ```
-* mean daily steps are 1.0766189\times 10^{4}
+**NOTE:** Mean daily steps are 10,766.19
+`
 
 ```r
 # calculate median daily steps
 medianDailyStepsRevised <- median(dailyStepsRevised$dailySteps, na.rm = TRUE)
 ```
-* median daily step are 1.0766189\times 10^{4}
+**NOTE:** Mean daily steps are 10,766.19
 
-## 5. Are there differences in activity patterns between weekdays and weekends?
+
+ [back to top](#top)
+ 
+ 
+----
+
+
+## Are there differences in activity patterns between weekdays and weekends?
 For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
 
 Create a new factor variable in the dataset with two levels – “weekday” and “weekend” indicating whether a given date is a weekday or weekend day.
@@ -244,7 +280,7 @@ Make a panel plot containing a time series plot (i.e. type = "l") of the 5-minut
 
 ```r
 newData$dayOfWeek = "weekday"
-newData[(weekdays(newData$date) %in% c("Sunday", "Saturday")),]$dayOfWeek = "weekend"
+newData[(weekdays(newData$date) %in% c("Saturday", "Sunday")),]$dayOfWeek = "weekend"
 newData$dayOfWeek <- as.factor(newData$dayOfWeek)
 table(newData$dayOfWeek)
 ```
@@ -262,7 +298,12 @@ weeklyData <- newData %>% group_by(dayOfWeek, interval) %>% summarize(meanActivi
 
 
 ```r
-ggplot(weeklyData, aes(interval, meanActivity)) + geom_line() + facet_wrap(~ dayOfWeek)
+ggplot(weeklyData, aes(interval, meanActivity)) + 
+    geom_line() + 
+    facet_wrap(~dayOfWeek, ncol=1) + 
+    theme_economist() +
+    labs(title="5-minute activity pattern for weekday vs. weekend") +
+    labs(x="5 minutes interval", y="Steps")
 ```
 
 ![](PA1_template_files/figure-html/unnamed-chunk-18-1.png)<!-- -->

@@ -9,13 +9,12 @@ output:
     number_sections: true
     toc_depth: 2
     toc_float: true
-    theme: united
-    highlight: tango
+    theme: flatly
     fig_width: 8
     fig_height: 6
 ---
 
-## Introduction
+## <a id="top">Introduction</a>
 It is now possible to collect a large amount of data about personal movement using activity monitoring devices such as a Fitbit, [Nike](http://www.fitbit.com/) [Fuelband](http://www.nike.com/us/en_us/c/nikeplus-fuelband), or [Jawbone Up](https://jawbone.com/up). These type of devices are part of the “quantified self” movement – a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. But these data remain under-utilized both because the raw data are hard to obtain and there is a lack of statistical methods and software for processing and interpreting the data.
 
 This assignment makes use of data from a personal activity monitoring device. This device collects data at 5 minute intervals through out the day. The data consists of two months of data from an anonymous individual collected during the months of October and November, 2012 and include the number of steps taken in 5 minute intervals each day.
@@ -35,7 +34,7 @@ The dataset is stored in a comma-separated-value (CSV) file and there are a tota
 
 ```{r echo = TRUE, message=FALSE, warning=FALSE}
 library(dplyr) # load dplyr for data manipulation
-library(lattice) # lattice for data visualization
+library(ggthemes) # use themes to beautify graphs
 library(ggplot2) # ggplot for data visualization
 ```
 
@@ -55,6 +54,11 @@ data$date <- as.Date(data$date)
 # generate data summary
 summary(data)
 ```
+
+ [back to top](#top)
+
+ 
+-----
 
 ## What is mean total number of steps taken per day?
 For this part of the assignment, you can ignore the missing values in the dataset.
@@ -77,6 +81,7 @@ ggplot(na.omit(dailySteps), aes(dailySteps)) +
                     fill="lightblue", 
                     alpha = .2
                    ) + 
+    theme_economist() +
     labs(title="Histogram of Total Daily Steps") +
     labs(x="Steps", y="Count")
 ```
@@ -97,6 +102,13 @@ medianDailySteps
 ```
 **NOTE:** Meedian daily steps are `r prettyNum(medianDailySteps,big.mark=",",scientific=FALSE)`
 
+
+ [back to top](#top)
+
+ 
+-----
+
+
 ## What is the average daily activity pattern?
 ### Plot 5-minute interval and average number of steps taken
 Make a time series plot of the 5-minute interval (x-axis) and the average number of steps taken, averaged across all days (y-axis)
@@ -107,6 +119,7 @@ dailyPattern <- data %>% group_by(interval) %>% summarize(meanActivity = mean(st
 
 # plot average 5-minute activity trend using ggplot
 ggplot(dailyPattern, aes(interval, meanActivity)) + geom_line() + 
+        theme_economist() +
         labs(title="5-minute activity pattern for average day") +
     labs(x="5 minutes interval", y="Steps")
 ```
@@ -162,6 +175,7 @@ ggplot(dailyStepsRevised, aes(dailySteps)) +
                     fill="lightblue", 
                     alpha = .2
                    ) + 
+    theme_economist() +
     labs(title="Histogram of Total Daily Steps") +
     labs(x="Steps", y="Count")
 ```
@@ -177,6 +191,13 @@ meanDailyStepsRevised <- mean(dailyStepsRevised$dailySteps, na.rm = TRUE)
 medianDailyStepsRevised <- median(dailyStepsRevised$dailySteps, na.rm = TRUE)
 ```
 **NOTE:** Mean daily steps are `r prettyNum(medianDailyStepsRevised,big.mark=",",scientific=FALSE)`
+
+
+ [back to top](#top)
+ 
+ 
+----
+
 
 ## Are there differences in activity patterns between weekdays and weekends?
 For this part the weekdays() function may be of some help here. Use the dataset with the filled-in missing values for this part.
@@ -200,6 +221,7 @@ weeklyData <- newData %>% group_by(dayOfWeek, interval) %>% summarize(meanActivi
 ggplot(weeklyData, aes(interval, meanActivity)) + 
     geom_line() + 
     facet_wrap(~dayOfWeek, ncol=1) + 
+    theme_economist() +
     labs(title="5-minute activity pattern for weekday vs. weekend") +
     labs(x="5 minutes interval", y="Steps")
 ```
